@@ -1,4 +1,4 @@
-<!-- Vijay Academy - Student Portal (Login + Register) -->
+<!-- Vijay Academy - Student Portal (Login + Register with backend integration) -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,14 +15,14 @@
     <!-- Login Form -->
     <div class="bg-white rounded-2xl shadow-md p-6">
       <h2 class="text-xl font-bold mb-4 text-center">Student Login</h2>
-      <form action="/login" method="POST" class="space-y-4">
+      <form id="loginForm" class="space-y-4">
         <div>
           <label class="block text-sm font-medium">Student ID</label>
-          <input type="text" name="studentId" class="w-full p-2 border border-gray-300 rounded" required />
+          <input type="text" id="loginId" class="w-full p-2 border border-gray-300 rounded" required />
         </div>
         <div>
           <label class="block text-sm font-medium">Password</label>
-          <input type="password" name="password" class="w-full p-2 border border-gray-300 rounded" required />
+          <input type="password" id="loginPassword" class="w-full p-2 border border-gray-300 rounded" required />
         </div>
         <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded">Login</button>
       </form>
@@ -31,26 +31,26 @@
     <!-- Registration Form -->
     <div class="bg-white rounded-2xl shadow-md p-6">
       <h2 class="text-xl font-bold mb-4 text-center">Student Registration</h2>
-      <form action="/register" method="POST" class="space-y-4">
+      <form id="registerForm" class="space-y-4">
         <div>
           <label class="block text-sm font-medium">Full Name</label>
-          <input type="text" name="name" class="w-full p-2 border border-gray-300 rounded" required />
+          <input type="text" id="regName" class="w-full p-2 border border-gray-300 rounded" required />
         </div>
         <div>
           <label class="block text-sm font-medium">Student ID</label>
-          <input type="text" name="studentId" class="w-full p-2 border border-gray-300 rounded" required />
+          <input type="text" id="regId" class="w-full p-2 border border-gray-300 rounded" required />
         </div>
         <div>
           <label class="block text-sm font-medium">Email (optional)</label>
-          <input type="email" name="email" class="w-full p-2 border border-gray-300 rounded" />
+          <input type="email" id="regEmail" class="w-full p-2 border border-gray-300 rounded" />
         </div>
         <div>
           <label class="block text-sm font-medium">Password</label>
-          <input type="password" name="password" class="w-full p-2 border border-gray-300 rounded" required />
+          <input type="password" id="regPassword" class="w-full p-2 border border-gray-300 rounded" required />
         </div>
         <div>
           <label class="block text-sm font-medium">Confirm Password</label>
-          <input type="password" name="confirmPassword" class="w-full p-2 border border-gray-300 rounded" required />
+          <input type="password" id="regConfirm" class="w-full p-2 border border-gray-300 rounded" required />
         </div>
         <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded">Register</button>
       </form>
@@ -59,5 +59,57 @@
   <footer class="text-center text-sm text-gray-600 mt-8">
     &copy; 2025 Vijay Academy. All rights reserved.
   </footer>
+
+  <script>
+    const backendURL = "https://vijay-backend.onrender.com";
+
+    // Handle Login
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const studentId = document.getElementById("loginId").value;
+      const password = document.getElementById("loginPassword").value;
+
+      const res = await fetch(`${backendURL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ studentId, password })
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        alert("Login successful!");
+      } else {
+        alert("Login failed: " + data.message);
+      }
+    });
+
+    // Handle Registration
+    document.getElementById("registerForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = document.getElementById("regName").value;
+      const studentId = document.getElementById("regId").value;
+      const email = document.getElementById("regEmail").value;
+      const password = document.getElementById("regPassword").value;
+      const confirmPassword = document.getElementById("regConfirm").value;
+
+      if (password !== confirmPassword) {
+        alert("Passwords do not match");
+        return;
+      }
+
+      const res = await fetch(`${backendURL}/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, studentId, email, password })
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        alert("Registration successful!");
+      } else {
+        alert("Registration failed.");
+      }
+    });
+  </script>
 </body>
 </html>
